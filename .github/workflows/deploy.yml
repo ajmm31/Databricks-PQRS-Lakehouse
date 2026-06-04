@@ -67,14 +67,14 @@ jobs:
           fi
         }
 
-        # Subir archivos Jupyter (Verifica mayúsculas en 'PrepAmb', 'proceso', etc.)
+        # Subir archivos Jupyter
         upload_file "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER" ""
         upload_file "proceso/01_extract.ipynb" "JUPYTER" ""
         upload_file "proceso/02_transform.ipynb" "JUPYTER" ""
         upload_file "proceso/03_load.ipynb" "JUPYTER" ""
-        upload_file "reversion/04_advanced_delta.ipynb" "JUPYTER" ""
         
-        # Subir archivo SQL (OJO: Revisa si la carpeta es 'seguridad' o 'Seguridad')
+        # Subir archivo SQL
+        upload_file "reversion/02_reversion_tablas.sql" "SOURCE" "SQL"
         upload_file "seguridad/01_grants_seguridad.sql" "SOURCE" "SQL"
 
     - name: Check if workflow exists and delete if necessary
