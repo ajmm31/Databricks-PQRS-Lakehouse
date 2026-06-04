@@ -32,7 +32,7 @@ jobs:
         DEST_HOST=${{ secrets.DATABRICKS_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
         
-        # Función para subir archivos a Databricks vía API (sin depender del CLI)
+        # Función para subir archivos a Databricks vía API
         upload_notebook() {
           local local_file=$1
           local format=$2
@@ -44,12 +44,13 @@ jobs:
             "$DEST_HOST/api/2.0/workspace/import" > /dev/null
         }
 
-        # Subir todos los archivos (Ajusta las carpetas si alguna es diferente)
+        # Subir todos los archivos con sus rutas y extensiones correctas
         upload_notebook "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER"
         upload_notebook "proceso/01_extract.ipynb" "JUPYTER"
+        upload_notebook "seguridad/01_grants_seguridad.ipynb" "JUPYTER"
         upload_notebook "proceso/02_transform.ipynb" "JUPYTER"
         upload_notebook "proceso/03_load.ipynb" "JUPYTER"
-        upload_notebook "proceso/04_advanced_delta.ipynb" "JUPYTER"
+        upload_notebook "reversion/04_advanced_delta.ipynb" "JUPYTER"
         
         # Subir el archivo SQL especificando el lenguaje
         echo "Subiendo archivo de seguridad..."
