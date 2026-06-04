@@ -29,22 +29,22 @@ jobs:
     # Subir todos los archivos
     - name: Upload Databricks Notebooks
       run: |
-        databricks workspace rm ${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb || true
+        databricks workspace delete ${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb || true
         databricks workspace import ./proceso/00_preparacion_ambiente.ipynb ${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb
         
-        databricks workspace rm ${{ env.DEST_BASE }}/01_extract.ipynb || true
+        databricks workspace delete ${{ env.DEST_BASE }}/01_extract.ipynb || true
         databricks workspace import ./proceso/01_extract.ipynb ${{ env.DEST_BASE }}/01_extract.ipynb
         
-        databricks workspace rm ${{ env.DEST_BASE }}/01_grants_seguridad.ipynb || true
+        databricks workspace delete ${{ env.DEST_BASE }}/01_grants_seguridad.ipynb || true
         databricks workspace import ./seguridad/01_grants_seguridad.ipynb ${{ env.DEST_BASE }}/01_grants_seguridad.ipynb
         
-        databricks workspace rm ${{ env.DEST_BASE }}/02_transform.ipynb || true
+        databricks workspace delete ${{ env.DEST_BASE }}/02_transform.ipynb || true
         databricks workspace import ./proceso/02_transform.ipynb ${{ env.DEST_BASE }}/02_transform.ipynb
         
-        databricks workspace rm ${{ env.DEST_BASE }}/03_load.ipynb || true
+        databricks workspace delete ${{ env.DEST_BASE }}/03_load.ipynb || true
         databricks workspace import ./proceso/03_load.ipynb ${{ env.DEST_BASE }}/03_load.ipynb
         
-        databricks workspace rm ${{ env.DEST_BASE }}/04_advanced_delta.ipynb || true
+        databricks workspace delete ${{ env.DEST_BASE }}/04_advanced_delta.ipynb || true
         databricks workspace import ./reversion/04_advanced_delta.ipynb ${{ env.DEST_BASE }}/04_advanced_delta.ipynb
         
         # Subir el archivo SQL especificando el lenguaje
