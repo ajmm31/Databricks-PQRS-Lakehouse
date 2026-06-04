@@ -46,7 +46,7 @@ jobs:
         upload_notebook "proceso/04_advanced_delta.ipynb" "JUPYTER"
         
         # Subir el archivo SQL como SOURCE
-        upload_notebook "seguridad/grants.sql" "SOURCE"
+        upload_notebook "seguridad/01_grants_seguridad.sql" "SOURCE"
 
     - name: Check if workflow exists and delete if necessary
       run: |
@@ -121,7 +121,7 @@ jobs:
               "task_key": "6_Grants",
               "depends_on": [{"task_key": "5_Delta"}],
               "spark_python_task": { 
-                "python_file": "${{ env.DEST_BASE }}/grants.sql", "source": "WORKSPACE" 
+                "python_file": "${{ env.DEST_BASE }}/01_grants_seguridad.sql", "source": "WORKSPACE" 
               },
               "existing_cluster_id": "$CLUSTER_ID"
             }
