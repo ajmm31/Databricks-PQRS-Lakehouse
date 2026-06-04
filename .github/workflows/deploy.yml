@@ -32,34 +32,50 @@ jobs:
         DEST_HOST=${{ secrets.DATABRICKS_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
         
-        # Función para subir archivos a Databricks vía API (Solo para notebooks)
-        upload_notebook() {
+        echo "🔍 Escaneando archivos en el repositorio (para verificar mayúsculas/minúsculas):"
+        ls -R
+        echo "---------------------------------------------------"
+        
+        # Función universal para subir archivos a Databricks
+        upload_file() {
           local local_file=$1
           local format=$2
-          local dest_path="${{ env.DEST_BASE }}/$(basename "$local_file")"
-          echo "Subiendo $local_file -> $dest_path"
+          local language=$3
           
-          curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
-            -F "path=$dest_path" -F "format=$format" -F "overwrite=true" -F "content=@$local_file" \
-            "$DEST_HOST/api/2.0/workspace/import" > /dev/null
+          # Validación de seguridad: Comprobar que el archivo realmente existe
+          if [ ! -f "$local_file" ]; then
+            echo "❌ ERROR FATAL: No se encuentra '$local_file'."
+            echo "💡 Revisa que las mayúsculas/minúsculas coincidan EXACTAMENTE con GitHub."
+            exit 1
+          fi
+          
+          # Quitamos la extensión local (.ipynb o .sql) para el nombre en Databricks
+          local filename=$(basename "$local_file")
+          local name_no_ext="${filename%.*}"
+          local dest_path="${{ env.DEST_BASE }}/$name_no_ext"
+          
+          echo "✅ Subiendo $local_file -> $dest_path ($format)"
+          
+          if [ -n "$language" ]; then
+            curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
+              -F "path=$dest_path" -F "format=$format" -F "language=$language" -F "overwrite=true" -F "content=@$local_file" \
+              "$DEST_HOST/api/2.0/workspace/import" > /dev/null
+          else
+            curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
+              -F "path=$dest_path" -F "format=$format" -F "overwrite=true" -F "content=@$local_file" \
+              "$DEST_HOST/api/2.0/workspace/import" > /dev/null
+          fi
         }
 
-        # Subir todos los archivos Jupyter (.ipynb)
-        upload_notebook "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER"
-        upload_notebook "proceso/01_extract.ipynb" "JUPYTER"
-        upload_notebook "proceso/02_transform.ipynb" "JUPYTER"
-        upload_notebook "proceso/03_load.ipynb" "JUPYTER"
-        upload_notebook "reversion/04_advanced_delta.ipynb" "JUPYTER"
+        # Subir archivos Jupyter (Verifica mayúsculas en 'PrepAmb', 'proceso', etc.)
+        upload_file "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER" ""
+        upload_file "proceso/01_extract.ipynb" "JUPYTER" ""
+        upload_file "proceso/02_transform.ipynb" "JUPYTER" ""
+        upload_file "proceso/03_load.ipynb" "JUPYTER" ""
+        upload_file "reversion/04_advanced_delta.ipynb" "JUPYTER" ""
         
-        # Subir el archivo de Seguridad (.sql) con su formato correcto
-        echo "Subiendo archivo de seguridad SQL -> ${{ env.DEST_BASE }}/01_grants_seguridad"
-        curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
-          -F "path=${{ env.DEST_BASE }}/01_grants_seguridad" \
-          -F "format=SOURCE" \
-          -F "language=SQL" \
-          -F "overwrite=true" \
-          -F "content=@seguridad/01_grants_seguridad.sql" \
-          "$DEST_HOST/api/2.0/workspace/import" > /dev/null
+        # Subir archivo SQL (OJO: Revisa si la carpeta es 'seguridad' o 'Seguridad')
+        upload_file "seguridad/01_grants_seguridad.sql" "SOURCE" "SQL"
 
     - name: Check if workflow exists and delete if necessary
       run: |
