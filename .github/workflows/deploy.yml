@@ -26,24 +26,15 @@ jobs:
         # Crear la carpeta principal en Databricks
         curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: application/json" -d "{\"path\":\"${{ env.DEST_BASE }}\"}" "$DEST_HOST/api/2.0/workspace/mkdirs"
         
-        # Función para subir archivos a Databricks
-        upload_notebook() {
-          local local_file=$1
-          local format=$2
-          local dest_path="${{ env.DEST_BASE }}/$(basename "$local_file")"
-          echo "Subiendo $local_file -> $dest_path"
-          
-          curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
-            -F "path=$dest_path" -F "format=$format" -F "overwrite=true" -F "content=@$local_file" \
-            "$DEST_HOST/api/2.0/workspace/import" > /dev/null
-        }
-
-        # Subir todos los archivos
-        upload_notebook "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER"
-        upload_notebook "proceso/01_extract.ipynb" "JUPYTER"
-        upload_notebook "proceso/02_transform.ipynb" "JUPYTER"
-        upload_notebook "proceso/03_load.ipynb" "JUPYTER"
-        upload_notebook "proceso/04_advanced_delta.ipynb" "JUPYTER"
+    # Subir todos los archivos
+    - name: Upload Databricks Notebooks
+      run: |
+        databricks workspace import ./proceso/00_preparacion_ambiente.ipynb ${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb --overwrite
+        databricks workspace import ./proceso/01_extract.ipynb ${{ env.DEST_BASE }}/01_extract.ipynb --overwrite
+        databricks workspace import ./seguridad/01_grants_seguridad.ipynb ${{ env.DEST_BASE }}/01_grants_seguridad.ipynb --overwrite
+        databricks workspace import ./proceso/02_transform.ipynb ${{ env.DEST_BASE }}/02_transform.ipynb --overwrite
+        databricks workspace import ./proceso/03_load.ipynb ${{ env.DEST_BASE }}/03_load.ipynb --overwrite
+        databricks workspace import ./reversion/04_advanced_delta.ipynb ${{ env.DEST_BASE }}/04_advanced_delta.ipynb --overwrite
         
         # Subir el archivo SQL especificando el lenguaje
         echo "Subiendo archivo de seguridad..."
