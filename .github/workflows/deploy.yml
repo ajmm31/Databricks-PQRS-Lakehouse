@@ -120,8 +120,8 @@ jobs:
             {
               "task_key": "6_Grants",
               "depends_on": [{"task_key": "5_Delta"}],
-              "spark_python_task": { 
-                "python_file": "${{ env.DEST_BASE }}/01_grants_seguridad.sql", "source": "WORKSPACE" 
+              "notebook_task": { 
+                "notebook_path": "${{ env.DEST_BASE }}/01_grants_seguridad.sql", "source": "WORKSPACE" 
               },
               "existing_cluster_id": "$CLUSTER_ID"
             }
