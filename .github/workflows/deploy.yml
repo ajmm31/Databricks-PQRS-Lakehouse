@@ -29,23 +29,27 @@ jobs:
     # Subir todos los archivos
     - name: Upload Databricks Notebooks
       run: |
-        databricks workspace delete ${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb || true
-        databricks workspace import ${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb --file ./proceso/00_preparacion_ambiente.ipynb --format AUTO
+        DEST_HOST=${{ secrets.DATABRICKS_HOST }}
+        DEST_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
         
-        databricks workspace delete ${{ env.DEST_BASE }}/01_extract.ipynb || true
-        databricks workspace import ${{ env.DEST_BASE }}/01_extract.ipynb --file ./proceso/01_extract.ipynb --format AUTO
-        
-        databricks workspace delete ${{ env.DEST_BASE }}/01_grants_seguridad.ipynb || true
-        databricks workspace import ${{ env.DEST_BASE }}/01_grants_seguridad.ipynb --file ./seguridad/01_grants_seguridad.ipynb --format AUTO
-        
-        databricks workspace delete ${{ env.DEST_BASE }}/02_transform.ipynb || true
-        databricks workspace import ${{ env.DEST_BASE }}/02_transform.ipynb --file ./proceso/02_transform.ipynb --format AUTO
-        
-        databricks workspace delete ${{ env.DEST_BASE }}/03_load.ipynb || true
-        databricks workspace import ${{ env.DEST_BASE }}/03_load.ipynb --file ./proceso/03_load.ipynb --format AUTO
-        
-        databricks workspace delete ${{ env.DEST_BASE }}/04_advanced_delta.ipynb || true
-        databricks workspace import ${{ env.DEST_BASE }}/04_advanced_delta.ipynb --file ./reversion/04_advanced_delta.ipynb --format AUTO
+        # Función para subir archivos a Databricks vía API (sin depender del CLI)
+        upload_notebook() {
+          local local_file=$1
+          local format=$2
+          local dest_path="${{ env.DEST_BASE }}/$(basename "$local_file")"
+          echo "Subiendo $local_file -> $dest_path"
+          
+          curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
+            -F "path=$dest_path" -F "format=$format" -F "overwrite=true" -F "content=@$local_file" \
+            "$DEST_HOST/api/2.0/workspace/import" > /dev/null
+        }
+
+        # Subir todos los archivos (Ajusta las carpetas si alguna es diferente)
+        upload_notebook "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER"
+        upload_notebook "proceso/01_extract.ipynb" "JUPYTER"
+        upload_notebook "proceso/02_transform.ipynb" "JUPYTER"
+        upload_notebook "proceso/03_load.ipynb" "JUPYTER"
+        upload_notebook "proceso/04_advanced_delta.ipynb" "JUPYTER"
         
         # Subir el archivo SQL especificando el lenguaje
         echo "Subiendo archivo de seguridad..."
