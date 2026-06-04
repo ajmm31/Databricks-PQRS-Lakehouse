@@ -32,7 +32,7 @@ jobs:
         DEST_HOST=${{ secrets.DATABRICKS_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
         
-        # Función para subir archivos a Databricks vía API
+        # Función para subir archivos a Databricks vía API (Solo para notebooks)
         upload_notebook() {
           local local_file=$1
           local format=$2
@@ -44,16 +44,15 @@ jobs:
             "$DEST_HOST/api/2.0/workspace/import" > /dev/null
         }
 
-        # Subir todos los archivos con sus rutas y extensiones correctas
+        # Subir todos los archivos Jupyter (.ipynb)
         upload_notebook "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER"
         upload_notebook "proceso/01_extract.ipynb" "JUPYTER"
-        upload_notebook "seguridad/01_grants_seguridad.ipynb" "JUPYTER"
         upload_notebook "proceso/02_transform.ipynb" "JUPYTER"
         upload_notebook "proceso/03_load.ipynb" "JUPYTER"
         upload_notebook "reversion/04_advanced_delta.ipynb" "JUPYTER"
         
-        # Subir el archivo SQL especificando el lenguaje
-        echo "Subiendo archivo de seguridad..."
+        # Subir el archivo de Seguridad (.sql) con su formato correcto
+        echo "Subiendo archivo de seguridad SQL -> ${{ env.DEST_BASE }}/01_grants_seguridad"
         curl -s -X POST -H "Authorization: Bearer $DEST_TOKEN" -H "Content-Type: multipart/form-data" \
           -F "path=${{ env.DEST_BASE }}/01_grants_seguridad" \
           -F "format=SOURCE" \
