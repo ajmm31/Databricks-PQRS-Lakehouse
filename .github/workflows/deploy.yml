@@ -69,9 +69,11 @@ jobs:
 
         # Subir archivos Jupyter
         upload_file "PrepAmb/00_preparacion_ambiente.ipynb" "JUPYTER" ""
+
         upload_file "proceso/01_extract.ipynb" "JUPYTER" ""
         upload_file "proceso/02_transform.ipynb" "JUPYTER" ""
         upload_file "proceso/03_load.ipynb" "JUPYTER" ""
+        upload_file "proceso/04_advanced_delta.ipynb" "JUPYTER" ""
         
         # Subir archivo SQL
         upload_file "reversion/02_reversion_tablas.sql" "SOURCE" "SQL"
