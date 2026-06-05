@@ -119,35 +119,30 @@ jobs:
           "tasks": [
             {
               "task_key": "1_PrepAmb",
-              #"notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/00_preparacion_ambiente.ipynb", "source": "WORKSPACE" },
               "notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/00_preparacion_ambiente", "source": "WORKSPACE" },
               "existing_cluster_id": "$CLUSTER_ID"
             },
             {
               "task_key": "2_Extract",
               "depends_on": [{"task_key": "1_PrepAmb"}],
-              #"notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/01_extract.ipynb", "source": "WORKSPACE" },
               "notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/01_extract", "source": "WORKSPACE" },
               "existing_cluster_id": "$CLUSTER_ID"
             },
             {
               "task_key": "3_Transform",
               "depends_on": [{"task_key": "2_Extract"}],
-              #"notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/02_transform.ipynb", "source": "WORKSPACE" },
               "notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/02_transform", "source": "WORKSPACE" },
               "existing_cluster_id": "$CLUSTER_ID"
             },
             {
               "task_key": "4_Load",
               "depends_on": [{"task_key": "3_Transform"}],
-              #"notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/03_load.ipynb", "source": "WORKSPACE" },
               "notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/03_load", "source": "WORKSPACE" },
               "existing_cluster_id": "$CLUSTER_ID"
             },
             {
               "task_key": "5_Delta",
               "depends_on": [{"task_key": "4_Load"}],
-              #"notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/04_advanced_delta.ipynb", "source": "WORKSPACE" },
               "notebook_task": { "notebook_path": "${{ env.DEST_BASE }}/04_advanced_delta", "source": "WORKSPACE" },
               "existing_cluster_id": "$CLUSTER_ID"
             },
