@@ -54,4 +54,4 @@ Este repositorio cuenta con un pipeline automatizado en `deploy.yml`. Cada vez q
 * **Dynamic Renaming:** Tolerancia al esquema de origen (Case-Insensitivity en columnas de bases de datos relacionales).
 
 ---
-*Desarrollado con ❤️ por el Equipo de Data Engineering.*
+*Desarrollado con ❤️ por el Equipo de Data Engineering - Alvaro Jose Muñoz Murillo.*
