@@ -1,16 +1,20 @@
 -- =====================================================================================
 -- PROYECTO: PORTAL DE TICKETS PQRS
--- ETAPA: SEGURIDAD Y PERMISOS (GRANTS)
--- OBJETIVO: Brindar acceso de lectura a los analistas sobre las capas de consumo.
+-- ETAPA: SEGURIDAD Y GOBIERNO DE DATOS (UNITY CATALOG)
+-- OBJETIVO: Brindar permisos de solo lectura a la capa Gold para el equipo de Analítica
 -- =====================================================================================
 
--- 1. Dar permiso para "ver" y usar el catálogo
-GRANT USAGE ON CATALOG catalogo_pqrs TO `account users`;
+-- Nota: En un entorno real, el grupo 'equipo_analitica' se crea desde la Consola de Administración.
+-- Aquí documentamos la asignación de permisos siguiendo las mejores prácticas (Roles / Grupos).
 
--- 2. Dar permiso para "entrar" a los esquemas de consumo
-GRANT USAGE ON SCHEMA catalogo_pqrs.silver TO `account users`;
-GRANT USAGE ON SCHEMA catalogo_pqrs.gold TO `account users`;
+-- 1. Permiso para usar el catálogo principal
+GRANT USAGE ON CATALOG catalogo_pqrs TO `equipo_analitica`;
 
--- 3. Dar permiso de LECTURA (Select) sobre las tablas específicas
-GRANT SELECT ON TABLE catalogo_pqrs.silver.tickets_enriquecidos TO `account users`;
-GRANT SELECT ON TABLE catalogo_pqrs.gold.kpi_tickets_region TO `account users`;
+-- 2. Permiso para usar el esquema Gold (donde están los Datamarts)
+GRANT USAGE ON SCHEMA catalogo_pqrs.gold TO `equipo_analitica`;
+
+-- 3. Permiso de lectura (SELECT) sobre todas las tablas actuales en la capa Gold
+GRANT SELECT ON SCHEMA catalogo_pqrs.gold TO `equipo_analitica`;
+
+-- 4. (Opcional pero Recomendado) Permiso para que el grupo pueda leer futuras tablas que se creen en Gold
+ALTER SCHEMA catalogo_pqrs.gold OWNER TO `admin_pqrs`; -- Ajusta 'admin_pqrs' a tu usuario administrador si lo deseas

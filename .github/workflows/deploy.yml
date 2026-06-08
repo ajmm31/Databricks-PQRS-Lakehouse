@@ -75,8 +75,10 @@ jobs:
         upload_file "proceso/03_load.ipynb" "JUPYTER" ""
         upload_file "proceso/04_advanced_delta.ipynb" "JUPYTER" ""
         
-        # Subir archivo SQL
-        upload_file "reversion/02_reversion_tablas.sql" "SOURCE" "SQL"
+        # Subir el nuevo archivo de reversión (Asegúrate de que la ruta física coincida con la carpeta de tu repositorio, ej. 'reversion/')
+        upload_file "reversion/99_reversion.ipynb" "JUPYTER" ""
+        
+        # Subir archivo SQL (Se mantiene el de grants)
         upload_file "seguridad/01_grants_seguridad.sql" "SOURCE" "SQL"
 
     - name: Check if workflow exists and delete if necessary
