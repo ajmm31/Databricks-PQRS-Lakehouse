@@ -17,4 +17,4 @@ GRANT USAGE ON SCHEMA catalogo_pqrs.gold TO `equipo_analitica`;
 GRANT SELECT ON SCHEMA catalogo_pqrs.gold TO `equipo_analitica`;
 
 -- 4. (Opcional pero Recomendado) Permiso para que el grupo pueda leer futuras tablas que se creen en Gold
-ALTER SCHEMA catalogo_pqrs.gold OWNER TO `admin_pqrs`; -- Ajusta 'admin_pqrs' a tu usuario administrador si lo deseas
+--ALTER SCHEMA catalogo_pqrs.gold OWNER TO `admin_pqrs`; -- Ajusta 'admin_pqrs' a tu usuario administrador si lo deseas
